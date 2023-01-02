@@ -99,7 +99,7 @@ past newAstNode()
 	return node;
 }
 
-past newI(int value)
+past newIntger(int value)
 {
 	past var = newAstNode();
 	var->nodeType = INTEGER_LITERAL;
@@ -108,7 +108,7 @@ past newI(int value)
 	sprintf(var->svalue,"%d",value);
 	return var;
 }
-past newF(float value)
+past newFloat(float value)
 {
 	past var = newAstNode();
 	var->nodeType = FLOATING_LITERAL;
@@ -117,14 +117,14 @@ past newF(float value)
 	sprintf(var->svalue,"%f",value);
 	return var;
 }
-past newS(char* value){
+past newString(char* value){
 	past var = newAstNode();
 	var->nodeType = DECL_REF_EXPR;
 	var->svalue = malloc(strlen(value)+1);
 	strcpy(var->svalue,value);
 	return var;
 }
-past astLOrExp(past land,past lor){
+past doLOrExp(past land,past lor){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	top->svalue = "||";
@@ -145,7 +145,7 @@ past astLOrExp(past land,past lor){
 		return lor;
 	}
 }
-past astLAndExp(past eq,past land){
+past doLAndExp(past eq,past land){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	top->svalue = "&&";
@@ -166,7 +166,7 @@ past astLAndExp(past eq,past land){
 		return land;
 	}
 }
-past astEqExp(char* s,past rel,past eq){
+past doEqExp(char* s,past rel,past eq){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
@@ -187,7 +187,7 @@ past astEqExp(char* s,past rel,past eq){
 		return eq;
 	}
 }
-past astRelExp(char* s,past add,past rel){
+past doRelExp(char* s,past add,past rel){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
@@ -208,7 +208,7 @@ past astRelExp(char* s,past add,past rel){
 		return rel;
 	}
 }
-past astAddExp(char* s,past mul,past add){
+past doAddExp(char* s,past mul,past add){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
@@ -229,7 +229,7 @@ past astAddExp(char* s,past mul,past add){
 		return add;
 	}
 }
-past astMulExp(char* s,past unary,past mul){
+past doMulExp(char* s,past unary,past mul){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
@@ -250,7 +250,7 @@ past astMulExp(char* s,past unary,past mul){
 		return mul;
 	}
 }
-past astCallParams(past add,past call){
+past doCallParams(past add,past call){
 	add->next = call;
 	return add;
 }
@@ -259,11 +259,11 @@ past funcc(char* s,past call){
 	funcc->nodeType = CALL_EXPR;
 	funcc->svalue=malloc(2);
 	strcpy(funcc->svalue," ");
-	funcc->left = newS(s);
+	funcc->left = newString(s);
 	funcc->right = call;
 	return funcc;
 }
-past astUnaryExp(char* s,past unary){
+past doUnaryExp(char* s,past unary){
 	past tmp = newAstNode();
 	tmp->nodeType = UNARY_OPERATOR;
 	tmp->svalue = malloc(3);
@@ -271,7 +271,7 @@ past astUnaryExp(char* s,past unary){
 	tmp->left = unary;
 	return tmp;
 }
-past astArray(past a,past b){
+past doArray(past a,past b){
 	past tmp = newAstNode();
 	tmp->nodeType = ARRAY_SUBSCRIPT_EXPR;
 	tmp->svalue=malloc(2);
@@ -290,8 +290,8 @@ past astArray(past a,past b){
 		return b;
 	}
 }
-past astLVal(char* s,past array){
-	past id = newS(s);
+past doLVal(char* s,past array){
+	past id = newString(s);
 	past p = array;
 	while(p->left!=NULL){
 		p=p->left;
@@ -299,11 +299,11 @@ past astLVal(char* s,past array){
 	p->left = id;
 	return array;
 }
-past astCompUnit(past a,past b){
+past doCompUnit(past a,past b){
 	a->next = b;
 	return a;
 }
-past astConstDecl(char* s,past def){
+past doConstDecl(char* s,past def){
 	past tmp = newAstNode();
 	tmp->nodeType = DECL_STMT;
 	tmp->svalue=malloc(2);
@@ -318,11 +318,11 @@ past astConstDecl(char* s,past def){
 	tmp->left = def;
 	return tmp;
 }
-past astConstDefs(past a,past b){
+past doConstDefs(past a,past b){
 	a->next = b;
 	return a;
 }
-past astConstDef(char* s,past init){
+past doConstDef(char* s,past init){
 	past tmp = newAstNode();
 	tmp->nodeType = VAR_DECL;
 	tmp->svalue = malloc(strlen(s)+15);
@@ -330,7 +330,7 @@ past astConstDef(char* s,past init){
 	tmp->left = init;
 	return tmp;
 }
-past astConstInitVal(past a,past b){
+past doConstInitVal(past a,past b){
 	past tmp = newAstNode();
 	tmp->nodeType = INIT_LIST_EXPR;
 	tmp->svalue=malloc(3);
@@ -348,11 +348,11 @@ past astConstInitVal(past a,past b){
 		return tmp;
 	}
 }
-past astConstInitVals(past a,past b){
+past doConstInitVals(past a,past b){
 	a->next = b;
 	return a;
 }
-past astVarDecl(char* s,past a,past b){
+past doVarDecl(char* s,past a,past b){
 	past tmp = newAstNode();
 	tmp->nodeType = DECL_STMT;
 	tmp->svalue=malloc(2);
@@ -375,11 +375,11 @@ past astVarDecl(char* s,past a,past b){
 		return tmp;
 	}
 }
-past astVarDecls(past a,past b){
+past doVarDecls(past a,past b){
 	a->next = b;
 	return a;
 }
-past astVarDef(char* s,past a){
+past doVarDef(char* s,past a){
 	past tmp = newAstNode();
 	tmp->nodeType = VAR_DECL;
 	tmp->svalue = malloc(strlen(s)+10);
@@ -387,7 +387,7 @@ past astVarDef(char* s,past a){
 	tmp->left = a;
 	return tmp;
 }
-past astInitVal(past a,past b){
+past doInitVal(past a,past b){
 	past tmp = newAstNode();
 	tmp->nodeType = INIT_LIST_EXPR;
 	tmp->svalue=malloc(2);
@@ -405,11 +405,11 @@ past astInitVal(past a,past b){
 		return tmp;
 	}
 }
-past astInitVals(past a,past b){
+past doInitVals(past a,past b){
 	a->next = b;
 	return a;
 }
-past astFuncDef(char* s,char* s2,past a,past b){
+past doFuncDef(char* s,char* s2,past a,past b){
 	past tmp = newAstNode();
 	tmp->nodeType=FUNCTION_DECL;
 	tmp->svalue=malloc(strlen(s)+strlen(s2)+2);
@@ -420,11 +420,11 @@ past astFuncDef(char* s,char* s2,past a,past b){
 	tmp->right=b;
 	return tmp;
 }
-past astFuncParams(past a,past b){
+past doFuncParams(past a,past b){
 	a->next = b;
 	return a;
 }
-past astFuncParam(char* s,char* s2){
+past doFuncParam(char* s,char* s2){
 	past tmp = newAstNode();
 	tmp->nodeType=PARM_DECL;
 	tmp->svalue=malloc(strlen(s)+strlen(s2)+2);
@@ -433,7 +433,7 @@ past astFuncParam(char* s,char* s2){
 	strcat(tmp->svalue,s2);
 	return tmp;
 }
-past astBlock(past a){
+past doBlock(past a){
 	past tmp = newAstNode();
 	tmp->nodeType=COMPOUND_STMT;
 	tmp->svalue=malloc(2);
@@ -441,11 +441,11 @@ past astBlock(past a){
 	tmp->left=a;
 	return tmp;
 }
-past astBlockItems(past a,past b){
+past doBlockItems(past a,past b){
 	a->next = b;
 	return a;
 }
-past astStmt1(past a,past b){
+past doStmt1(past a,past b){
 	past tmp=newAstNode();
 	tmp->nodeType=BINARY_OPERATOR;
 	tmp->svalue=malloc(3);
@@ -454,14 +454,14 @@ past astStmt1(past a,past b){
 	tmp->right=b;
 	return tmp;
 }
-past astStmt2(void){
+past doStmt2(void){
 	past tmp=newAstNode();
 	tmp->nodeType=NULL_STMT;
 	tmp->svalue=malloc(2);
 	strcpy(tmp->svalue," ");
 	return tmp;
 }
-past astwhile(past a,past b){
+past dowhile(past a,past b){
 	past tmp=newAstNode();
 	tmp->nodeType=WHILE_STMT;
 	tmp->svalue=malloc(2);
@@ -470,7 +470,7 @@ past astwhile(past a,past b){
 	tmp->right=b;
 	return tmp;
 }
-past astif(past a,past b,past c){
+past doif(past a,past b,past c){
 	past tmp=newAstNode();
 	tmp->nodeType=IF_STMT;
 	tmp->svalue=malloc(2);
@@ -484,21 +484,21 @@ past astif(past a,past b,past c){
 	}
 	return tmp;
 }
-past astbreak(void){
+past dobreak(void){
 	past tmp=newAstNode();
 	tmp->nodeType=BREAK_STMT;
 	tmp->svalue=malloc(2);
 	strcpy(tmp->svalue," ");
 	return tmp;
 }
-past astcontinue(void){
+past docontinue(void){
 	past tmp=newAstNode();
 	tmp->nodeType=CONTINUE_STMT;
 	tmp->svalue=malloc(2);
 	strcpy(tmp->svalue," ");
 	return tmp;
 }
-past astreturn(past a){
+past doreturn(past a){
 	past tmp=newAstNode();
 	tmp->nodeType=RETURN_STMT;
 	tmp->svalue=malloc(2);

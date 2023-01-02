@@ -1289,13 +1289,13 @@ yyreduce:
 
   case 4: /* CompUnit: Decl CompUnit  */
 #line 43 "lrparser.y"
-                                        {(yyval.pAst)=astCompUnit((yyvsp[-1].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst)=doCompUnit((yyvsp[-1].pAst),(yyvsp[0].pAst));}
 #line 1294 "lrparser.tab.c"
     break;
 
   case 5: /* CompUnit: FuncDef CompUnit  */
 #line 44 "lrparser.y"
-                                                {(yyval.pAst)=astCompUnit((yyvsp[-1].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst)=doCompUnit((yyvsp[-1].pAst),(yyvsp[0].pAst));}
 #line 1300 "lrparser.tab.c"
     break;
 
@@ -1325,13 +1325,13 @@ yyreduce:
 
   case 10: /* PrimaryExp: num_INT  */
 #line 51 "lrparser.y"
-                                                                {(yyval.pAst) = newI((yyvsp[0].ivalue));}
+                                                                {(yyval.pAst) = newIntger((yyvsp[0].ivalue));}
 #line 1330 "lrparser.tab.c"
     break;
 
   case 11: /* PrimaryExp: num_FLOAT  */
 #line 52 "lrparser.y"
-                                                                {(yyval.pAst) = newF((yyvsp[0].fvalue));}
+                                                                {(yyval.pAst) = newFloat((yyvsp[0].fvalue));}
 #line 1336 "lrparser.tab.c"
     break;
 
@@ -1361,7 +1361,7 @@ yyreduce:
 
   case 16: /* LOrExp: LAndExp Y_OR LOrExp  */
 #line 61 "lrparser.y"
-                                        {(yyval.pAst) = astLOrExp((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst) = doLOrExp((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1366 "lrparser.tab.c"
     break;
 
@@ -1373,7 +1373,7 @@ yyreduce:
 
   case 18: /* LAndExp: EqExp Y_AND LAndExp  */
 #line 65 "lrparser.y"
-                                        {(yyval.pAst) = astLAndExp((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst) = doLAndExp((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1378 "lrparser.tab.c"
     break;
 
@@ -1385,13 +1385,13 @@ yyreduce:
 
   case 20: /* EqExp: RelExp Y_EQ EqExp  */
 #line 69 "lrparser.y"
-                                                {(yyval.pAst) = astEqExp("==",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst) = doEqExp("==",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1390 "lrparser.tab.c"
     break;
 
   case 21: /* EqExp: RelExp Y_NOTEQ EqExp  */
 #line 70 "lrparser.y"
-                                        {(yyval.pAst) = astEqExp("!=",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst) = doEqExp("!=",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1396 "lrparser.tab.c"
     break;
 
@@ -1403,25 +1403,25 @@ yyreduce:
 
   case 23: /* RelExp: AddExp Y_LESS RelExp  */
 #line 74 "lrparser.y"
-                                                {(yyval.pAst) = astRelExp("<",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst) = doRelExp("<",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1408 "lrparser.tab.c"
     break;
 
   case 24: /* RelExp: AddExp Y_GREAT RelExp  */
 #line 75 "lrparser.y"
-                                                {(yyval.pAst) = astRelExp(">",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst) = doRelExp(">",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1414 "lrparser.tab.c"
     break;
 
   case 25: /* RelExp: AddExp Y_LESSEQ RelExp  */
 #line 76 "lrparser.y"
-                                                {(yyval.pAst) = astRelExp("<=",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst) = doRelExp("<=",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1420 "lrparser.tab.c"
     break;
 
   case 26: /* RelExp: AddExp Y_GREATEQ RelExp  */
 #line 77 "lrparser.y"
-                                                {(yyval.pAst) = astRelExp(">=",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst) = doRelExp(">=",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1426 "lrparser.tab.c"
     break;
 
@@ -1433,13 +1433,13 @@ yyreduce:
 
   case 28: /* AddExp: MulExp Y_ADD AddExp  */
 #line 81 "lrparser.y"
-                                        {(yyval.pAst) = astAddExp("+",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst) = doAddExp("+",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1438 "lrparser.tab.c"
     break;
 
   case 29: /* AddExp: MulExp Y_SUB AddExp  */
 #line 82 "lrparser.y"
-                                        {(yyval.pAst) = astAddExp("-",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst) = doAddExp("-",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1444 "lrparser.tab.c"
     break;
 
@@ -1451,19 +1451,19 @@ yyreduce:
 
   case 31: /* MulExp: UnaryExp Y_MUL MulExp  */
 #line 86 "lrparser.y"
-                                        {(yyval.pAst) = astMulExp("*",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst) = doMulExp("*",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1456 "lrparser.tab.c"
     break;
 
   case 32: /* MulExp: UnaryExp Y_DIV MulExp  */
 #line 87 "lrparser.y"
-                                        {(yyval.pAst) = astMulExp("/",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                        {(yyval.pAst) = doMulExp("/",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1462 "lrparser.tab.c"
     break;
 
   case 33: /* MulExp: UnaryExp Y_MODULO MulExp  */
 #line 88 "lrparser.y"
-                                                {(yyval.pAst) = astMulExp("%",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst) = doMulExp("%",(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1468 "lrparser.tab.c"
     break;
 
@@ -1475,7 +1475,7 @@ yyreduce:
 
   case 35: /* CallParams: AddExp Y_COMMA CallParams  */
 #line 92 "lrparser.y"
-                                                        {(yyval.pAst) = astCallParams((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                        {(yyval.pAst) = doCallParams((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1480 "lrparser.tab.c"
     break;
 
@@ -1499,43 +1499,43 @@ yyreduce:
 
   case 39: /* UnaryExp: Y_ADD UnaryExp  */
 #line 98 "lrparser.y"
-                                                                        {(yyval.pAst) = astUnaryExp("+",(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst) = doUnaryExp("+",(yyvsp[0].pAst));}
 #line 1504 "lrparser.tab.c"
     break;
 
   case 40: /* UnaryExp: Y_SUB UnaryExp  */
 #line 99 "lrparser.y"
-                                                                        {(yyval.pAst) = astUnaryExp("-",(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst) = doUnaryExp("-",(yyvsp[0].pAst));}
 #line 1510 "lrparser.tab.c"
     break;
 
   case 41: /* UnaryExp: Y_NOT UnaryExp  */
 #line 100 "lrparser.y"
-                                                                        {(yyval.pAst) = astUnaryExp("!",(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst) = doUnaryExp("!",(yyvsp[0].pAst));}
 #line 1516 "lrparser.tab.c"
     break;
 
   case 42: /* ArraySubscripts: Y_LSQUARE AddExp Y_RSQUARE  */
 #line 103 "lrparser.y"
-                                                                                        {(yyval.pAst) = astArray((yyvsp[-1].pAst),NULL);}
+                                                                                        {(yyval.pAst) = doArray((yyvsp[-1].pAst),NULL);}
 #line 1522 "lrparser.tab.c"
     break;
 
   case 43: /* ArraySubscripts: Y_LSQUARE AddExp Y_RSQUARE ArraySubscripts  */
 #line 104 "lrparser.y"
-                                                                                        {(yyval.pAst) = astArray((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                                                        {(yyval.pAst) = doArray((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1528 "lrparser.tab.c"
     break;
 
   case 44: /* LVal: Y_ID  */
 #line 107 "lrparser.y"
-                                                {(yyval.pAst)=newS((yyvsp[0].svalue));}
+                                                {(yyval.pAst)=newString((yyvsp[0].svalue));}
 #line 1534 "lrparser.tab.c"
     break;
 
   case 45: /* LVal: Y_ID ArraySubscripts  */
 #line 108 "lrparser.y"
-                                        {(yyval.pAst)=astLVal((yyvsp[-1].svalue),(yyvsp[0].pAst));}
+                                        {(yyval.pAst)=doLVal((yyvsp[-1].svalue),(yyvsp[0].pAst));}
 #line 1540 "lrparser.tab.c"
     break;
 
@@ -1553,37 +1553,37 @@ yyreduce:
 
   case 48: /* ConstDecl: Y_CONST Type ConstDef Y_SEMICOLON  */
 #line 116 "lrparser.y"
-                                                        {(yyval.pAst)=astConstDecl((yyvsp[-2].svalue),(yyvsp[-1].pAst));}
+                                                        {(yyval.pAst)=doConstDecl((yyvsp[-2].svalue),(yyvsp[-1].pAst));}
 #line 1558 "lrparser.tab.c"
     break;
 
   case 49: /* ConstDecl: Y_CONST Type ConstDefs Y_SEMICOLON  */
 #line 117 "lrparser.y"
-                                                                {(yyval.pAst)=astConstDecl((yyvsp[-2].svalue),(yyvsp[-1].pAst));}
+                                                                {(yyval.pAst)=doConstDecl((yyvsp[-2].svalue),(yyvsp[-1].pAst));}
 #line 1564 "lrparser.tab.c"
     break;
 
   case 50: /* ConstDefs: ConstDef Y_COMMA ConstDef  */
 #line 120 "lrparser.y"
-                                                {(yyval.pAst)=astConstDefs((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst)=doConstDefs((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1570 "lrparser.tab.c"
     break;
 
   case 51: /* ConstDefs: ConstDef Y_COMMA ConstDefs  */
 #line 121 "lrparser.y"
-                                                        {(yyval.pAst)=astConstDefs((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                        {(yyval.pAst)=doConstDefs((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1576 "lrparser.tab.c"
     break;
 
   case 52: /* ConstDef: Y_ID Y_ASSIGN ConstInitVal  */
 #line 124 "lrparser.y"
-                                                                        {(yyval.pAst)=astConstDef((yyvsp[-2].svalue),(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst)=doConstDef((yyvsp[-2].svalue),(yyvsp[0].pAst));}
 #line 1582 "lrparser.tab.c"
     break;
 
   case 53: /* ConstDef: Y_ID ConstExps Y_ASSIGN ConstInitVal  */
 #line 125 "lrparser.y"
-                                                                {(yyval.pAst)=astConstDef((yyvsp[-3].svalue),(yyvsp[0].pAst));}
+                                                                {(yyval.pAst)=doConstDef((yyvsp[-3].svalue),(yyvsp[0].pAst));}
 #line 1588 "lrparser.tab.c"
     break;
 
@@ -1607,19 +1607,19 @@ yyreduce:
 
   case 57: /* ConstInitVal: Y_LBRACKET Y_RBRACKET  */
 #line 133 "lrparser.y"
-                                                                                                                {(yyval.pAst)=astConstInitVal(NULL,NULL);}
+                                                                                                                {(yyval.pAst)=doConstInitVal(NULL,NULL);}
 #line 1612 "lrparser.tab.c"
     break;
 
   case 58: /* ConstInitVal: Y_LBRACKET ConstInitVal Y_RBRACKET  */
 #line 134 "lrparser.y"
-                                                                                                        {(yyval.pAst)=astConstInitVal((yyvsp[-1].pAst),NULL);}
+                                                                                                        {(yyval.pAst)=doConstInitVal((yyvsp[-1].pAst),NULL);}
 #line 1618 "lrparser.tab.c"
     break;
 
   case 59: /* ConstInitVal: Y_LBRACKET ConstInitVal ConstInitVals Y_RBRACKET  */
 #line 135 "lrparser.y"
-                                                                                        {(yyval.pAst)=astConstInitVal((yyvsp[-2].pAst),(yyvsp[-1].pAst));}
+                                                                                        {(yyval.pAst)=doConstInitVal((yyvsp[-2].pAst),(yyvsp[-1].pAst));}
 #line 1624 "lrparser.tab.c"
     break;
 
@@ -1631,19 +1631,19 @@ yyreduce:
 
   case 61: /* ConstInitVals: Y_COMMA ConstInitVal ConstInitVals  */
 #line 139 "lrparser.y"
-                                                                        {(yyval.pAst)=astConstInitVals((yyvsp[-1].pAst),(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst)=doConstInitVals((yyvsp[-1].pAst),(yyvsp[0].pAst));}
 #line 1636 "lrparser.tab.c"
     break;
 
   case 62: /* VarDecl: Type VarDef Y_SEMICOLON  */
 #line 142 "lrparser.y"
-                                                                {(yyval.pAst)=astVarDecl((yyvsp[-2].svalue),(yyvsp[-1].pAst),NULL);}
+                                                                {(yyval.pAst)=doVarDecl((yyvsp[-2].svalue),(yyvsp[-1].pAst),NULL);}
 #line 1642 "lrparser.tab.c"
     break;
 
   case 63: /* VarDecl: Type VarDef VarDecls Y_SEMICOLON  */
 #line 143 "lrparser.y"
-                                                                {(yyval.pAst)=astVarDecl((yyvsp[-3].svalue),(yyvsp[-2].pAst),(yyvsp[-1].pAst));}
+                                                                {(yyval.pAst)=doVarDecl((yyvsp[-3].svalue),(yyvsp[-2].pAst),(yyvsp[-1].pAst));}
 #line 1648 "lrparser.tab.c"
     break;
 
@@ -1655,31 +1655,31 @@ yyreduce:
 
   case 65: /* VarDecls: Y_COMMA VarDef VarDecls  */
 #line 147 "lrparser.y"
-                                                        {(yyval.pAst)=astVarDecls((yyvsp[-1].pAst),(yyvsp[0].pAst));}
+                                                        {(yyval.pAst)=doVarDecls((yyvsp[-1].pAst),(yyvsp[0].pAst));}
 #line 1660 "lrparser.tab.c"
     break;
 
   case 66: /* VarDef: Y_ID  */
 #line 150 "lrparser.y"
-                                                                                {(yyval.pAst)=newS((yyvsp[0].svalue));}
+                                                                                {(yyval.pAst)=newString((yyvsp[0].svalue));}
 #line 1666 "lrparser.tab.c"
     break;
 
   case 67: /* VarDef: Y_ID Y_ASSIGN InitVal  */
 #line 151 "lrparser.y"
-                                                                        {(yyval.pAst)=astVarDef((yyvsp[-2].svalue),(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst)=doVarDef((yyvsp[-2].svalue),(yyvsp[0].pAst));}
 #line 1672 "lrparser.tab.c"
     break;
 
   case 68: /* VarDef: Y_ID ConstExps  */
 #line 152 "lrparser.y"
-                                                                                {(yyval.pAst)=newS((yyvsp[-1].svalue));}
+                                                                                {(yyval.pAst)=newString((yyvsp[-1].svalue));}
 #line 1678 "lrparser.tab.c"
     break;
 
   case 69: /* VarDef: Y_ID ConstExps Y_ASSIGN InitVal  */
 #line 153 "lrparser.y"
-                                                                {(yyval.pAst)=astVarDef((yyvsp[-3].svalue),(yyvsp[0].pAst));}
+                                                                {(yyval.pAst)=doVarDef((yyvsp[-3].svalue),(yyvsp[0].pAst));}
 #line 1684 "lrparser.tab.c"
     break;
 
@@ -1691,19 +1691,19 @@ yyreduce:
 
   case 71: /* InitVal: Y_LBRACKET Y_RBRACKET  */
 #line 157 "lrparser.y"
-                                                                                {(yyval.pAst)=astInitVal(NULL,NULL);}
+                                                                                {(yyval.pAst)=doInitVal(NULL,NULL);}
 #line 1696 "lrparser.tab.c"
     break;
 
   case 72: /* InitVal: Y_LBRACKET InitVal Y_RBRACKET  */
 #line 158 "lrparser.y"
-                                                                        {(yyval.pAst)=astInitVal((yyvsp[-1].pAst),NULL);}
+                                                                        {(yyval.pAst)=doInitVal((yyvsp[-1].pAst),NULL);}
 #line 1702 "lrparser.tab.c"
     break;
 
   case 73: /* InitVal: Y_LBRACKET InitVal InitVals Y_RBRACKET  */
 #line 159 "lrparser.y"
-                                                                {(yyval.pAst)=astInitVal((yyvsp[-2].pAst),(yyvsp[-1].pAst));}
+                                                                {(yyval.pAst)=doInitVal((yyvsp[-2].pAst),(yyvsp[-1].pAst));}
 #line 1708 "lrparser.tab.c"
     break;
 
@@ -1715,19 +1715,19 @@ yyreduce:
 
   case 75: /* InitVals: Y_COMMA InitVal InitVals  */
 #line 163 "lrparser.y"
-                                                        {(yyval.pAst)=astInitVals((yyvsp[-1].pAst),(yyvsp[0].pAst));}
+                                                        {(yyval.pAst)=doInitVals((yyvsp[-1].pAst),(yyvsp[0].pAst));}
 #line 1720 "lrparser.tab.c"
     break;
 
   case 76: /* FuncDef: Type Y_ID Y_LPAR Y_RPAR Block  */
 #line 166 "lrparser.y"
-                                                                        {(yyval.pAst)=astFuncDef((yyvsp[-4].svalue),(yyvsp[-3].svalue),NULL,(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst)=doFuncDef((yyvsp[-4].svalue),(yyvsp[-3].svalue),NULL,(yyvsp[0].pAst));}
 #line 1726 "lrparser.tab.c"
     break;
 
   case 77: /* FuncDef: Type Y_ID Y_LPAR FuncParams Y_RPAR Block  */
 #line 167 "lrparser.y"
-                                                                        {(yyval.pAst)=astFuncDef((yyvsp[-5].svalue),(yyvsp[-4].svalue),(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                                        {(yyval.pAst)=doFuncDef((yyvsp[-5].svalue),(yyvsp[-4].svalue),(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1732 "lrparser.tab.c"
     break;
 
@@ -1739,43 +1739,43 @@ yyreduce:
 
   case 79: /* FuncParams: FuncParam Y_COMMA FuncParams  */
 #line 171 "lrparser.y"
-                                                        {(yyval.pAst)=astFuncParams((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                        {(yyval.pAst)=doFuncParams((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1744 "lrparser.tab.c"
     break;
 
   case 80: /* FuncParam: Type Y_ID  */
 #line 174 "lrparser.y"
-                                                                        {(yyval.pAst)=astFuncParam((yyvsp[-1].svalue),(yyvsp[0].svalue));}
+                                                                        {(yyval.pAst)=doFuncParam((yyvsp[-1].svalue),(yyvsp[0].svalue));}
 #line 1750 "lrparser.tab.c"
     break;
 
   case 81: /* FuncParam: Type Y_ID Y_LSQUARE Y_RSQUARE  */
 #line 175 "lrparser.y"
-                                                        {(yyval.pAst)=astFuncParam((yyvsp[-3].svalue),(yyvsp[-2].svalue));}
+                                                        {(yyval.pAst)=doFuncParam((yyvsp[-3].svalue),(yyvsp[-2].svalue));}
 #line 1756 "lrparser.tab.c"
     break;
 
   case 82: /* FuncParam: Type Y_ID ArraySubscripts  */
 #line 176 "lrparser.y"
-                                                                                                {(yyval.pAst)=astFuncParam((yyvsp[-2].svalue),(yyvsp[-1].svalue));}
+                                                                                                {(yyval.pAst)=doFuncParam((yyvsp[-2].svalue),(yyvsp[-1].svalue));}
 #line 1762 "lrparser.tab.c"
     break;
 
   case 83: /* FuncParam: Type Y_ID Y_LSQUARE Y_RSQUARE ArraySubscripts  */
 #line 177 "lrparser.y"
-                                                                        {(yyval.pAst)=astFuncParam((yyvsp[-4].svalue),(yyvsp[-3].svalue));}
+                                                                        {(yyval.pAst)=doFuncParam((yyvsp[-4].svalue),(yyvsp[-3].svalue));}
 #line 1768 "lrparser.tab.c"
     break;
 
   case 84: /* Block: Y_LBRACKET BlockItems Y_RBRACKET  */
 #line 180 "lrparser.y"
-                                                {(yyval.pAst)=astBlock((yyvsp[-1].pAst));}
+                                                {(yyval.pAst)=doBlock((yyvsp[-1].pAst));}
 #line 1774 "lrparser.tab.c"
     break;
 
   case 85: /* Block: Y_LBRACKET Y_RBRACKET  */
 #line 181 "lrparser.y"
-                                                                {(yyval.pAst)=astBlock(NULL);}
+                                                                {(yyval.pAst)=doBlock(NULL);}
 #line 1780 "lrparser.tab.c"
     break;
 
@@ -1787,7 +1787,7 @@ yyreduce:
 
   case 87: /* BlockItems: BlockItem BlockItems  */
 #line 185 "lrparser.y"
-                                                {(yyval.pAst)=astBlockItems((yyvsp[-1].pAst),(yyvsp[0].pAst));}
+                                                {(yyval.pAst)=doBlockItems((yyvsp[-1].pAst),(yyvsp[0].pAst));}
 #line 1792 "lrparser.tab.c"
     break;
 
@@ -1805,13 +1805,13 @@ yyreduce:
 
   case 90: /* Stmt: LVal Y_ASSIGN AddExp Y_SEMICOLON  */
 #line 192 "lrparser.y"
-                                                {(yyval.pAst)=astStmt1((yyvsp[-3].pAst),(yyvsp[-1].pAst));}
+                                                {(yyval.pAst)=doStmt1((yyvsp[-3].pAst),(yyvsp[-1].pAst));}
 #line 1810 "lrparser.tab.c"
     break;
 
   case 91: /* Stmt: Y_SEMICOLON  */
 #line 193 "lrparser.y"
-                                                                        {(yyval.pAst)=astStmt2();}
+                                                                        {(yyval.pAst)=doStmt2();}
 #line 1816 "lrparser.tab.c"
     break;
 
@@ -1829,43 +1829,43 @@ yyreduce:
 
   case 94: /* Stmt: Y_WHILE Y_LPAR LOrExp Y_RPAR Stmt  */
 #line 196 "lrparser.y"
-                                                        {(yyval.pAst)=astwhile((yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                        {(yyval.pAst)=dowhile((yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1834 "lrparser.tab.c"
     break;
 
   case 95: /* Stmt: Y_IF Y_LPAR LOrExp Y_RPAR Stmt  */
 #line 197 "lrparser.y"
-                                                        {(yyval.pAst)=astif((yyvsp[-2].pAst),(yyvsp[0].pAst),NULL);}
+                                                        {(yyval.pAst)=doif((yyvsp[-2].pAst),(yyvsp[0].pAst),NULL);}
 #line 1840 "lrparser.tab.c"
     break;
 
   case 96: /* Stmt: Y_IF Y_LPAR LOrExp Y_RPAR Stmt Y_ELSE Stmt  */
 #line 198 "lrparser.y"
-                                                                {(yyval.pAst)=astif((yyvsp[-4].pAst),(yyvsp[-2].pAst),(yyvsp[0].pAst));}
+                                                                {(yyval.pAst)=doif((yyvsp[-4].pAst),(yyvsp[-2].pAst),(yyvsp[0].pAst));}
 #line 1846 "lrparser.tab.c"
     break;
 
   case 97: /* Stmt: Y_BREAK Y_SEMICOLON  */
 #line 199 "lrparser.y"
-                                                        {(yyval.pAst)=astbreak();}
+                                                        {(yyval.pAst)=dobreak();}
 #line 1852 "lrparser.tab.c"
     break;
 
   case 98: /* Stmt: Y_CONTINUE Y_SEMICOLON  */
 #line 200 "lrparser.y"
-                                                        {(yyval.pAst)=astcontinue();}
+                                                        {(yyval.pAst)=docontinue();}
 #line 1858 "lrparser.tab.c"
     break;
 
   case 99: /* Stmt: Y_RETURN AddExp Y_SEMICOLON  */
 #line 201 "lrparser.y"
-                                                {(yyval.pAst)=astreturn((yyvsp[-1].pAst));}
+                                                {(yyval.pAst)=doreturn((yyvsp[-1].pAst));}
 #line 1864 "lrparser.tab.c"
     break;
 
   case 100: /* Stmt: Y_RETURN Y_SEMICOLON  */
 #line 202 "lrparser.y"
-                                                        {(yyval.pAst)=astreturn(NULL);}
+                                                        {(yyval.pAst)=doreturn(NULL);}
 #line 1870 "lrparser.tab.c"
     break;
 
