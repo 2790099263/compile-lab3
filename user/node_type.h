@@ -8,36 +8,36 @@ enum _node_type{
 	// A declaration whose specific kind is not exposed via this interface
 	//
 
-	// A C or C++ struct
+	// struct声明
 	STRUCT_DECL = 2,
 
-	// A C or C++ union
+	// union声明
 	UNION_DECL = 3,
 
-	// An enumeration
+	// enum声明
 	ENUM_DECL = 5,
 
 	// A field in C, or non-static data member in C++, in a struct, union, or C++
 	// class
 	FIELD_DECL = 6,
 
-	// An enumerator constant
+	// const enum声明
 	ENUM_CONSTANT_DECL = 7,
 
-	// A function
+	// 函数声明
 	FUNCTION_DECL = 8,
 
-	// A variable
+	// 变量声明
 	VAR_DECL = 9,
 
-	// A function or method parameter
+	// 参数
 	PARM_DECL = 10,
 
 
-	// A typedef
+	// typedef
 	TYPEDEF_DECL = 20,
 
-	// A Type alias decl
+	// 别名
 	TYPE_ALIAS_DECL = 36,
 
 
@@ -53,7 +53,7 @@ enum _node_type{
 	OVERLOADED_DECL_REF = 49,
 
 	// A reference to a variable that occurs in some non-expression
-	// context, eg, a C++ lambda capture list
+	// 变量引用
 	VARIABLE_REF = 50,
 
 
@@ -84,26 +84,26 @@ enum _node_type{
 	// class, etc
 	MEMBER_REF_EXPR = 102,
 
-	// An expression that calls a function
+	// 调用函数
 	CALL_EXPR = 103,
 
 
 	// An expression that represents a block literal
 	BLOCK_EXPR = 105,
 
-	// An integer literal
+	// int
 	INTEGER_LITERAL = 106,
 
-	// A floating point number literal
+	// float
 	FLOATING_LITERAL = 107,
 
-	// An imaginary number literal
+	// 虚数
 	IMAGINARY_LITERAL = 108,
 
-	// A string literal
+	// string
 	STRING_LITERAL = 109,
 
-	// A character literal
+	// char
 	CHARACTER_LITERAL = 110,
 
 	// A parenthesized expression, eg "1,"
@@ -119,7 +119,7 @@ enum _node_type{
 	ARRAY_SUBSCRIPT_EXPR = 113,
 
 	// A builtin binary operation expression such as "x + y" or
-	// "x <= y"
+	// 二元运算符
 	BINARY_OPERATOR = 114,
 
 	// Compound assignment such as "+="
@@ -155,7 +155,7 @@ enum _node_type{
 	// A labelled statement in a function
 	LABEL_STMT = 201,
 
-	// A compound statement
+	// 复合语句
 	COMPOUND_STMT = 202,
 
 	// A case statement

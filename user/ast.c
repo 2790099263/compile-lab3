@@ -1,8 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "ast.h"
-#include "node_type.h"
 
 enum yytokentype {
     num_INT = 258,
@@ -47,6 +43,11 @@ enum yytokentype {
 
     Y_FLOAT = 293
 };
+extern int yylex();
+extern int yylval;
+extern char *yytext;
+char s_now[10];
+int tok;
 
 void print(past cur) {
 	enum yytokentype type = cur->nodeType;
@@ -82,28 +83,426 @@ void showAst(past node, int nest) {
 	//printf("%d\n", node->nodeType);
 	print(node);
 	puts("");
-	showAst(node->if_cond, nest + 1);
 	showAst(node->left, nest + 1);
 	showAst(node->right, nest + 1);
 	showAst(node->next, nest);
 }
-past newAstNode(node_type nodetype,past left,past right){
-    past node = malloc(sizeof(ast));
-    if(node == NULL){
-        printf("Run out of Memory!\n");
-        exit(0);
-    }
-    memset(node,0,sizeof(ast));
-    node->nodeType  =   nodetype;
-    node->left      =   left    ;
-    node->right     =   right   ;
-    return node;
+past newAstNode()
+{
+	past node = malloc(sizeof(ast));
+	if(node == NULL)
+	{
+		printf("run out of memory.\n");
+		exit(0);
+	}
+	memset(node, 0, sizeof(ast));
+	return node;
 }
-void Free(past x){
-    if(x==NULL)return ;
-    Free(x->left);
-    Free(x->right);
-    Free(x->next);
-    free(x);
-    return ;
+
+past newI(int value)
+{
+	past var = newAstNode();
+	var->nodeType = INTEGER_LITERAL;
+	var->ivalue = value;
+	var->svalue=malloc(10);
+	sprintf(var->svalue,"%d",value);
+	return var;
+}
+past newF(float value)
+{
+	past var = newAstNode();
+	var->nodeType = FLOATING_LITERAL;
+	var->fvalue = value;
+	var->svalue=malloc(10);
+	sprintf(var->svalue,"%f",value);
+	return var;
+}
+past newS(char* value){
+	past var = newAstNode();
+	var->nodeType = DECL_REF_EXPR;
+	var->svalue = malloc(strlen(value)+1);
+	strcpy(var->svalue,value);
+	return var;
+}
+past astLOrExp(past land,past lor){
+	past top = newAstNode();
+	top->svalue = malloc(3);
+	top->svalue = "||";
+	top->nodeType = BINARY_OPERATOR;
+	if(strcmp(lor->svalue,"||")){
+		top->left = land;
+		top->right = lor;
+		return top;
+	}
+	else{
+		past p = lor;
+		while(p->left!=NULL&&!strcmp(p->left->svalue,"||")){
+			p=p->left;
+		}
+		top->right = p->left;
+		p->left = top;
+		top->left = land;
+		return lor;
+	}
+}
+past astLAndExp(past eq,past land){
+	past top = newAstNode();
+	top->svalue = malloc(3);
+	top->svalue = "&&";
+	top->nodeType = BINARY_OPERATOR;
+	if(strcmp(land->svalue,"&&")){
+		top->left = eq;
+		top->right = land;
+		return top;
+	}
+	else{
+		past p = land;
+		while(p->left!=NULL&&!strcmp(p->left->svalue,"&&")){
+			p=p->left;
+		}
+		top->right = p->left;
+		p->left = top;
+		top->left = eq;
+		return land;
+	}
+}
+past astEqExp(char* s,past rel,past eq){
+	past top = newAstNode();
+	top->svalue = malloc(3);
+	strcpy(top->svalue,s);
+	top->nodeType = BINARY_OPERATOR;
+	if(strcmp(eq->svalue,"==")||strcmp(eq->svalue,"!=")){
+		top->left = rel;
+		top->right = eq;
+		return top;
+	}
+	else{
+		past p = eq;
+		while(p->left!=NULL&&(!strcmp(p->left->svalue,"==")||!strcmp(p->left->svalue,"!="))){
+			p=p->left;
+		}
+		top->right = p->left;
+		p->left = top;
+		top->left = rel;
+		return eq;
+	}
+}
+past astRelExp(char* s,past add,past rel){
+	past top = newAstNode();
+	top->svalue = malloc(3);
+	strcpy(top->svalue,s);
+	top->nodeType = BINARY_OPERATOR;
+	if(strcmp(rel->svalue,"<")||strcmp(rel->svalue,"<=")||strcmp(rel->svalue,">")||strcmp(rel->svalue,">=")){
+		top->left = add;
+		top->right = rel;
+		return top;
+	}
+	else{
+		past p = rel;
+		while(p->left!=NULL&&(!strcmp(p->left->svalue,"<")||!strcmp(p->left->svalue,"<=")||!strcmp(p->left->svalue,">")||!strcmp(p->left->svalue,">="))){
+			p=p->left;
+		}
+		top->right = p->left;
+		p->left = top;
+		top->left = add;
+		return rel;
+	}
+}
+past astAddExp(char* s,past mul,past add){
+	past top = newAstNode();
+	top->svalue = malloc(3);
+	strcpy(top->svalue,s);
+	top->nodeType = BINARY_OPERATOR;
+	if(strcmp(add->svalue,"+")||strcmp(add->svalue,"-")){
+		top->left = mul;
+		top->right = add;
+		return top;
+	}
+	else{
+		past p = add;
+		while(p->left!=NULL&&p->left->nodeType!=UNARY_OPERATOR&&(!strcmp(p->left->svalue,"+")||!strcmp(p->left->svalue,"-"))){
+			p=p->left;
+		}
+		top->right = p->left;
+		p->left = top;
+		top->left = mul;
+		return add;
+	}
+}
+past astMulExp(char* s,past unary,past mul){
+	past top = newAstNode();
+	top->svalue = malloc(3);
+	strcpy(top->svalue,s);
+	top->nodeType = BINARY_OPERATOR;
+	if(strcmp(mul->svalue,"*")||strcmp(mul->svalue,"/")||strcmp(mul->svalue,"%")){
+		top->left = unary;
+		top->right = mul;
+		return top;
+	}
+	else{
+		past p = mul;
+		while(p->left!=NULL&&(!strcmp(p->left->svalue,"*")||!strcmp(p->left->svalue,"/")||!strcmp(p->left->svalue,"%"))){
+			p=p->left;
+		}
+		top->right = p->left;
+		p->left = top;
+		top->left = unary;
+		return mul;
+	}
+}
+past astCallParams(past add,past call){
+	add->next = call;
+	return add;
+}
+past funcc(char* s,past call){
+	past funcc = newAstNode();
+	funcc->nodeType = CALL_EXPR;
+	funcc->svalue=malloc(2);
+	strcpy(funcc->svalue," ");
+	funcc->left = newS(s);
+	funcc->right = call;
+	return funcc;
+}
+past astUnaryExp(char* s,past unary){
+	past tmp = newAstNode();
+	tmp->nodeType = UNARY_OPERATOR;
+	tmp->svalue = malloc(3);
+	strcpy(tmp->svalue,s);
+	tmp->left = unary;
+	return tmp;
+}
+past astArray(past a,past b){
+	past tmp = newAstNode();
+	tmp->nodeType = ARRAY_SUBSCRIPT_EXPR;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	if(b==NULL){
+		tmp->right = a;
+		return tmp;
+	}
+	else{
+		past p = b;
+		while(p->left!=NULL){
+			p=p->left;
+		}
+		p->left = tmp;
+		tmp->right = a;
+		return b;
+	}
+}
+past astLVal(char* s,past array){
+	past id = newS(s);
+	past p = array;
+	while(p->left!=NULL){
+		p=p->left;
+	}
+	p->left = id;
+	return array;
+}
+past astCompUnit(past a,past b){
+	a->next = b;
+	return a;
+}
+past astConstDecl(char* s,past def){
+	past tmp = newAstNode();
+	tmp->nodeType = DECL_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	past p = def;
+	do{
+		p->svalue = malloc(strlen(s)+6);
+		strcat(p->svalue," const ");
+		strcat(p->svalue,s);
+		p=p->next;
+	}while(p!=NULL);
+	tmp->left = def;
+	return tmp;
+}
+past astConstDefs(past a,past b){
+	a->next = b;
+	return a;
+}
+past astConstDef(char* s,past init){
+	past tmp = newAstNode();
+	tmp->nodeType = VAR_DECL;
+	tmp->svalue = malloc(strlen(s)+15);
+	strcpy(tmp->svalue,s);
+	tmp->left = init;
+	return tmp;
+}
+past astConstInitVal(past a,past b){
+	past tmp = newAstNode();
+	tmp->nodeType = INIT_LIST_EXPR;
+	tmp->svalue=malloc(3);
+	strcpy(tmp->svalue," ");
+	if(a==NULL&&b==NULL){
+		return tmp;
+	}
+	else if(b==NULL){
+		tmp->left = a;
+		return tmp;
+	}
+	else{
+		a->next = b;
+		tmp->left = a;
+		return tmp;
+	}
+}
+past astConstInitVals(past a,past b){
+	a->next = b;
+	return a;
+}
+past astVarDecl(char* s,past a,past b){
+	past tmp = newAstNode();
+	tmp->nodeType = DECL_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	if(b==NULL){
+		strcat(a->svalue," ");
+		strcat(a->svalue,s);
+		tmp->left = a;
+		return tmp;
+	}
+	else{
+		a->next = b;
+		past p = a;
+		while(p!=NULL){
+			strcat(p->svalue," ");
+			strcat(p->svalue,s);
+			p=p->next;
+		}
+		tmp->left = a;
+		return tmp;
+	}
+}
+past astVarDecls(past a,past b){
+	a->next = b;
+	return a;
+}
+past astVarDef(char* s,past a){
+	past tmp = newAstNode();
+	tmp->nodeType = VAR_DECL;
+	tmp->svalue = malloc(strlen(s)+10);
+	strcpy(tmp->svalue,s);
+	tmp->left = a;
+	return tmp;
+}
+past astInitVal(past a,past b){
+	past tmp = newAstNode();
+	tmp->nodeType = INIT_LIST_EXPR;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	if(a==NULL&&b==NULL){
+		return tmp;
+	}
+	else if(b==NULL){
+		tmp->left = a;
+		return tmp;
+	}
+	else{
+		a->next = b;
+		tmp->left = a;
+		return tmp;
+	}
+}
+past astInitVals(past a,past b){
+	a->next = b;
+	return a;
+}
+past astFuncDef(char* s,char* s2,past a,past b){
+	past tmp = newAstNode();
+	tmp->nodeType=FUNCTION_DECL;
+	tmp->svalue=malloc(strlen(s)+strlen(s2)+2);
+	strcpy(tmp->svalue,s);
+	strcat(tmp->svalue," ");
+	strcat(tmp->svalue,s2);
+	tmp->left=a;
+	tmp->right=b;
+	return tmp;
+}
+past astFuncParams(past a,past b){
+	a->next = b;
+	return a;
+}
+past astFuncParam(char* s,char* s2){
+	past tmp = newAstNode();
+	tmp->nodeType=PARM_DECL;
+	tmp->svalue=malloc(strlen(s)+strlen(s2)+2);
+	strcpy(tmp->svalue,s);
+	strcat(tmp->svalue," ");
+	strcat(tmp->svalue,s2);
+	return tmp;
+}
+past astBlock(past a){
+	past tmp = newAstNode();
+	tmp->nodeType=COMPOUND_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	tmp->left=a;
+	return tmp;
+}
+past astBlockItems(past a,past b){
+	a->next = b;
+	return a;
+}
+past astStmt1(past a,past b){
+	past tmp=newAstNode();
+	tmp->nodeType=BINARY_OPERATOR;
+	tmp->svalue=malloc(3);
+	strcpy(tmp->svalue,"=");
+	tmp->left=a;
+	tmp->right=b;
+	return tmp;
+}
+past astStmt2(void){
+	past tmp=newAstNode();
+	tmp->nodeType=NULL_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	return tmp;
+}
+past astwhile(past a,past b){
+	past tmp=newAstNode();
+	tmp->nodeType=WHILE_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	tmp->left=a;
+	tmp->right=b;
+	return tmp;
+}
+past astif(past a,past b,past c){
+	past tmp=newAstNode();
+	tmp->nodeType=IF_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	tmp->left=a;
+	tmp->right=b;
+	if(c!=NULL){
+		tmp->svalue=malloc(10);
+		strcpy(tmp->svalue,"has_else");
+		tmp->right->next=c;
+	}
+	return tmp;
+}
+past astbreak(void){
+	past tmp=newAstNode();
+	tmp->nodeType=BREAK_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	return tmp;
+}
+past astcontinue(void){
+	past tmp=newAstNode();
+	tmp->nodeType=CONTINUE_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	return tmp;
+}
+past astreturn(past a){
+	past tmp=newAstNode();
+	tmp->nodeType=RETURN_STMT;
+	tmp->svalue=malloc(2);
+	strcpy(tmp->svalue," ");
+	tmp->left=a;
+	return tmp;
 }
