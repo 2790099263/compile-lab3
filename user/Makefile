@@ -15,4 +15,4 @@ lex.yy.c : lrlex.l
 
 
 clean:
-	$(RM) *.o *.exe lrparser.tab.c lrparser.tab.h lex.yy.c
+	$(RM) *.o lrparser lrparser.tab.c lrparser.tab.h lex.yy.c

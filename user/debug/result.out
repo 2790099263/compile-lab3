@@ -1,0 +1,34 @@
+FUNCTION_DECL int main
+  COMPOUND_STMT
+    DECL_STMT
+      VAR_DECL a int
+        INTEGER_LITERAL 0
+      VAR_DECL b int
+        INTEGER_LITERAL 1
+    IF_STMT
+      BINARY_OPERATOR >
+        DECL_REF_EXPR a
+        INTEGER_LITERAL 0
+      BINARY_OPERATOR =
+        DECL_REF_EXPR b
+        BINARY_OPERATOR +
+          DECL_REF_EXPR b
+          INTEGER_LITERAL 1
+    DECL_STMT
+      VAR_DECL a int
+        INIT_LIST_EXPR
+          INTEGER_LITERAL 0
+          INTEGER_LITERAL 1
+          INTEGER_LITERAL 1
+          INTEGER_LITERAL 2
+          INTEGER_LITERAL 3
+    WHILE_STMT
+      INTEGER_LITERAL 1
+      COMPOUND_STMT
+        BINARY_OPERATOR =
+          DECL_REF_EXPR b
+          BINARY_OPERATOR +
+            DECL_REF_EXPR b
+            INTEGER_LITERAL 1
+    RETURN_STMT
+      INTEGER_LITERAL 0

@@ -31,7 +31,7 @@ past doLAndExp(past eq,past land);
 past doLOrExp(past land,past lor);
 past newString(char* value);
 past newFloat(float value);
-past newIntger(int value);
+past newInteger(int value);
 past newAstNode();
 void showAst(past node, int nest);
 past doCompUnit(past a,past b);

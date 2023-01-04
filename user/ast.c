@@ -1,5 +1,10 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "ast.h"
+#include "node_type.h"
 
+past root;
 enum yytokentype {
     num_INT = 258,
     num_FLOAT = 259,
@@ -87,19 +92,20 @@ void showAst(past node, int nest) {
 	showAst(node->right, nest + 1);
 	showAst(node->next, nest);
 }
+
 past newAstNode()
 {
 	past node = malloc(sizeof(ast));
 	if(node == NULL)
 	{
-		printf("run out of memory.\n");
+		printf("No memory!\n");
 		exit(0);
 	}
 	memset(node, 0, sizeof(ast));
 	return node;
 }
 
-past newIntger(int value)
+past newInteger(int value)
 {
 	past var = newAstNode();
 	var->nodeType = INTEGER_LITERAL;
@@ -124,131 +130,57 @@ past newString(char* value){
 	strcpy(var->svalue,value);
 	return var;
 }
-past doLOrExp(past land,past lor){
+past doLOrExp(past lor,past land){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	top->svalue = "||";
 	top->nodeType = BINARY_OPERATOR;
-	if(strcmp(lor->svalue,"||")){
-		top->left = land;
-		top->right = lor;
-		return top;
-	}
-	else{
-		past p = lor;
-		while(p->left!=NULL&&!strcmp(p->left->svalue,"||")){
-			p=p->left;
-		}
-		top->right = p->left;
-		p->left = top;
-		top->left = land;
-		return lor;
-	}
+	top->left=lor;
+	top->right=land;
+	return top;
 }
-past doLAndExp(past eq,past land){
+past doLAndExp(past land,past eq){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	top->svalue = "&&";
 	top->nodeType = BINARY_OPERATOR;
-	if(strcmp(land->svalue,"&&")){
-		top->left = eq;
-		top->right = land;
-		return top;
-	}
-	else{
-		past p = land;
-		while(p->left!=NULL&&!strcmp(p->left->svalue,"&&")){
-			p=p->left;
-		}
-		top->right = p->left;
-		p->left = top;
-		top->left = eq;
-		return land;
-	}
+	top->left=land;
+	top->right=eq;
+	return top;
 }
-past doEqExp(char* s,past rel,past eq){
+past doEqExp(char* s,past eq,past rel){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
 	top->nodeType = BINARY_OPERATOR;
-	if(strcmp(eq->svalue,"==")||strcmp(eq->svalue,"!=")){
-		top->left = rel;
-		top->right = eq;
-		return top;
-	}
-	else{
-		past p = eq;
-		while(p->left!=NULL&&(!strcmp(p->left->svalue,"==")||!strcmp(p->left->svalue,"!="))){
-			p=p->left;
-		}
-		top->right = p->left;
-		p->left = top;
-		top->left = rel;
-		return eq;
-	}
+	top->left=eq;
+	top->right=rel;
+	return top;
 }
-past doRelExp(char* s,past add,past rel){
+past doRelExp(char* s,past rel,past add){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
 	top->nodeType = BINARY_OPERATOR;
-	if(strcmp(rel->svalue,"<")||strcmp(rel->svalue,"<=")||strcmp(rel->svalue,">")||strcmp(rel->svalue,">=")){
-		top->left = add;
-		top->right = rel;
-		return top;
-	}
-	else{
-		past p = rel;
-		while(p->left!=NULL&&(!strcmp(p->left->svalue,"<")||!strcmp(p->left->svalue,"<=")||!strcmp(p->left->svalue,">")||!strcmp(p->left->svalue,">="))){
-			p=p->left;
-		}
-		top->right = p->left;
-		p->left = top;
-		top->left = add;
-		return rel;
-	}
+	top->left=rel;
+	top->right=add;
+	return top;
 }
-past doAddExp(char* s,past mul,past add){
+past doAddExp(char* s,past add,past mul){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
 	top->nodeType = BINARY_OPERATOR;
-	if(strcmp(add->svalue,"+")||strcmp(add->svalue,"-")){
-		top->left = mul;
-		top->right = add;
-		return top;
-	}
-	else{
-		past p = add;
-		while(p->left!=NULL&&p->left->nodeType!=UNARY_OPERATOR&&(!strcmp(p->left->svalue,"+")||!strcmp(p->left->svalue,"-"))){
-			p=p->left;
-		}
-		top->right = p->left;
-		p->left = top;
-		top->left = mul;
-		return add;
-	}
+	top->left=add;
+	top->right=mul;
 }
-past doMulExp(char* s,past unary,past mul){
+past doMulExp(char* s,past mul,past unary){
 	past top = newAstNode();
 	top->svalue = malloc(3);
 	strcpy(top->svalue,s);
 	top->nodeType = BINARY_OPERATOR;
-	if(strcmp(mul->svalue,"*")||strcmp(mul->svalue,"/")||strcmp(mul->svalue,"%")){
-		top->left = unary;
-		top->right = mul;
-		return top;
-	}
-	else{
-		past p = mul;
-		while(p->left!=NULL&&(!strcmp(p->left->svalue,"*")||!strcmp(p->left->svalue,"/")||!strcmp(p->left->svalue,"%"))){
-			p=p->left;
-		}
-		top->right = p->left;
-		p->left = top;
-		top->left = unary;
-		return mul;
-	}
+	top->left=mul;
+	top->right=unary;
 }
 past doCallParams(past add,past call){
 	add->next = call;
@@ -333,7 +265,7 @@ past doConstDef(char* s,past init){
 past doConstInitVal(past a,past b){
 	past tmp = newAstNode();
 	tmp->nodeType = INIT_LIST_EXPR;
-	tmp->svalue=malloc(3);
+	tmp->svalue=malloc(2);
 	strcpy(tmp->svalue," ");
 	if(a==NULL&&b==NULL){
 		return tmp;

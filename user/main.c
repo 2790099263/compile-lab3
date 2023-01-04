@@ -1,12 +1,15 @@
 #include<stdio.h>
 #include <stdlib.h>
+#include "ast.h"
 extern FILE* yyin;
 extern int yyparse(void);
 extern void init(void);
+extern past root;
 void yyerror(char *s)
 {
 	printf("%s\n", s);
 }
+
 int main(int argc,char* argv[])
 {
 	if(argc<2){
